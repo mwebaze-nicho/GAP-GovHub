@@ -75,34 +75,34 @@ export default function DataTransformation() {
     <MainLayout>
       <BreadcrumbNav />
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+        <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Data Transformation</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Data Transformation</h1>
+            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
               Transform and normalize data between government APIs
             </p>
           </div>
-          <Button className="mt-4 md:mt-0 w-full md:w-auto">
+          <Button className="w-full sm:w-auto">
             <Zap className="h-4 w-4 mr-2" />
             Create Transformation
           </Button>
         </div>
 
         {/* Transformations Grid */}
-        <div className="grid gap-6">
+        <div className="grid gap-4 sm:gap-6">
           {transformations.map((transform) => (
-            <Card key={transform.id} className="p-6">
-              <div className="grid md:grid-cols-2 gap-6">
+            <Card key={transform.id} className="p-4 sm:p-6">
+              <div className="space-y-6 xl:space-y-0 xl:grid xl:grid-cols-2 xl:gap-8">
                 {/* Left Column */}
                 <div>
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground">
+                  <div className="space-y-4 sm:space-y-0 sm:flex sm:items-start sm:justify-between mb-6">
+                    <div className="space-y-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-foreground">
                         {transform.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {transform.source} → {transform.target}
                       </p>
                     </div>
@@ -117,19 +117,19 @@ export default function DataTransformation() {
                     </Badge>
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-xs sm:text-sm">
                       <span className="text-muted-foreground">Field Mappings:</span>
                       <span className="font-medium text-foreground">{transform.mappings}</span>
                     </div>
-                    <div className="flex gap-2 pt-4">
-                      <Button variant="outline" size="sm">
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" className="text-xs">
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="text-xs">
                         Test
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="text-xs">
                         Deploy
                       </Button>
                     </div>
@@ -138,18 +138,18 @@ export default function DataTransformation() {
 
                 {/* Right Column - Code */}
                 <div>
-                  <div className="relative">
-                    <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-xs text-muted-foreground">
+                  <div className="relative border border-border rounded-lg overflow-x-auto">
+                    <pre className="bg-muted p-3 sm:p-4 text-xs font-mono text-muted-foreground whitespace-pre">
                       <code>{transform.code}</code>
                     </pre>
                     <button
                       onClick={() => copyToClipboard(transform.code, transform.id.toString())}
-                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors"
+                      className="absolute top-2 right-2 p-1.5 sm:p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors"
                     >
                       {copiedCode === transform.id.toString() ? (
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                       ) : (
-                        <Copy className="h-4 w-4" />
+                        <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
                       )}
                     </button>
                   </div>

@@ -13,6 +13,8 @@ import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 export default function DataTransformation() {
   const router = useRouter()
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
+  const [actionFeedback, setActionFeedback] = useState<string | null>(null)
+  const [testingTransform, setTestingTransform] = useState<number | null>(null)
 
   const transformations = [
     {
@@ -74,6 +76,45 @@ export default function DataTransformation() {
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
+  const handleEditTransform = (transformId: number, transformName: string) => {
+    // In a real app, this would open an edit modal or navigate to edit page
+    setActionFeedback(`Opening editor for ${transformName}...`)
+    setTimeout(() => {
+      setActionFeedback(`Editor opened for ${transformName}. Redirecting to Integration Wizard...`)
+      setTimeout(() => {
+        router.push('/integration-wizard?step=3')
+        setActionFeedback(null)
+      }, 1500)
+    }, 1000)
+  }
+
+  const handleTestTransform = async (transformId: number, transformName: string) => {
+    setTestingTransform(transformId)
+    setActionFeedback(`Testing ${transformName} transformation...`)
+
+    // Simulate API testing with realistic delay
+    setTimeout(() => {
+      const isSuccess = Math.random() > 0.2 // 80% success rate
+      if (isSuccess) {
+        setActionFeedback(`✅ Test passed! ${transformName} transformation is working correctly.`)
+      } else {
+        setActionFeedback(`❌ Test failed! ${transformName} has validation errors in field mapping.`)
+      }
+      setTestingTransform(null)
+      setTimeout(() => setActionFeedback(null), 4000)
+    }, 2500)
+  }
+
+  const handleDeployTransform = (transformId: number, transformName: string) => {
+    setActionFeedback(`Deploying ${transformName} to production...`)
+
+    // Simulate deployment process
+    setTimeout(() => {
+      setActionFeedback(`🚀 ${transformName} successfully deployed! Changes are now live.`)
+      setTimeout(() => setActionFeedback(null), 3000)
+    }, 2000)
+  }
+
   return (
     <MainLayout>
       <BreadcrumbNav />
@@ -95,6 +136,15 @@ export default function DataTransformation() {
             Create Transformation
           </Button>
         </div>
+
+        {/* Action Feedback */}
+        {actionFeedback && (
+          <div className="fixed top-4 right-4 z-50 max-w-md">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-lg">
+              <p className="text-sm text-foreground">{actionFeedback}</p>
+            </div>
+          </div>
+        )}
 
         {/* Transformations Grid */}
         <div className="grid gap-4 sm:gap-6">
@@ -129,13 +179,29 @@ export default function DataTransformation() {
                       <span className="font-medium text-foreground">{transform.mappings}</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" size="sm" className="text-xs">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 dark:hover:bg-blue-950 dark:hover:border-blue-700 dark:hover:text-blue-300"
+                        onClick={() => handleEditTransform(transform.id, transform.name)}
+                      >
                         Edit
                       </Button>
-                      <Button variant="outline" size="sm" className="text-xs">
-                        Test
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs hover:bg-green-50 hover:border-green-300 hover:text-green-700 dark:hover:bg-green-950 dark:hover:border-green-700 dark:hover:text-green-300"
+                        onClick={() => handleTestTransform(transform.id, transform.name)}
+                        disabled={testingTransform === transform.id}
+                      >
+                        {testingTransform === transform.id ? 'Testing...' : 'Test'}
                       </Button>
-                      <Button variant="outline" size="sm" className="text-xs">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs hover:bg-[#FFD700]/20 hover:border-[#FFD700] hover:text-[#FFD700] dark:hover:bg-[#FFD700]/10"
+                        onClick={() => handleDeployTransform(transform.id, transform.name)}
+                      >
                         Deploy
                       </Button>
                     </div>

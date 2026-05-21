@@ -70,34 +70,40 @@ export default function IntegrationWizard() {
   }
 
   const handleMappingChange = (mappingId: number, field: 'source' | 'target', value: string) => {
-    setFormData({
-      ...formData,
-      fieldMappings: formData.fieldMappings.map(mapping =>
+    setFormData(prevData => ({
+      ...prevData,
+      fieldMappings: prevData.fieldMappings.map(mapping =>
         mapping.id === mappingId
           ? { ...mapping, [field]: value }
           : mapping
       )
-    })
+    }))
   }
 
   const addFieldMapping = () => {
+    console.log('Adding new field mapping...')
     const newMapping = {
       id: Date.now(),
       source: '',
       target: '',
       description: 'Custom field mapping'
     }
-    setFormData({
-      ...formData,
-      fieldMappings: [...formData.fieldMappings, newMapping]
+    console.log('Current mappings:', formData.fieldMappings.length)
+    setFormData(prevData => {
+      const newData = {
+        ...prevData,
+        fieldMappings: [...prevData.fieldMappings, newMapping]
+      }
+      console.log('New mappings count:', newData.fieldMappings.length)
+      return newData
     })
   }
 
   const removeFieldMapping = (mappingId: number) => {
-    setFormData({
-      ...formData,
-      fieldMappings: formData.fieldMappings.filter(mapping => mapping.id !== mappingId)
-    })
+    setFormData(prevData => ({
+      ...prevData,
+      fieldMappings: prevData.fieldMappings.filter(mapping => mapping.id !== mappingId)
+    }))
   }
 
   return (
@@ -340,10 +346,15 @@ export default function IntegrationWizard() {
                         <p className="text-sm text-muted-foreground">Map your source fields to target fields</p>
                       </div>
                       <Button
+                        type="button"
                         variant="outline"
                         size="sm"
-                        onClick={addFieldMapping}
-                        className="flex items-center gap-2"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          addFieldMapping()
+                        }}
+                        className="flex items-center gap-2 hover:bg-[#FFD700]/10 hover:border-[#FFD700]"
                       >
                         <Plus className="h-4 w-4" />
                         Add Mapping

@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { CheckCircle, ArrowRight, Wand2, AlertCircle } from 'lucide-react'
+import { CheckCircle, ArrowRight, Wand2, AlertCircle, Plus, Trash2 } from 'lucide-react'
 import { ministries } from '@/lib/mock-data'
 
 const steps = [
@@ -36,6 +36,11 @@ export default function IntegrationWizard() {
     baseUrl: '',
     authType: 'api-key',
     apiKey: '',
+    fieldMappings: [
+      { id: 1, source: 'PatientID', target: 'national_id', description: 'Unique patient identifier' },
+      { id: 2, source: 'FullName', target: 'name', description: 'Patient full name' },
+      { id: 3, source: 'DOB', target: 'birth_date', description: 'Date of birth' },
+    ]
   })
 
   const canProceedFromStep = (step: number) => {
@@ -62,6 +67,37 @@ export default function IntegrationWizard() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData({ ...formData, [field]: value })
+  }
+
+  const handleMappingChange = (mappingId: number, field: 'source' | 'target', value: string) => {
+    setFormData({
+      ...formData,
+      fieldMappings: formData.fieldMappings.map(mapping =>
+        mapping.id === mappingId
+          ? { ...mapping, [field]: value }
+          : mapping
+      )
+    })
+  }
+
+  const addFieldMapping = () => {
+    const newMapping = {
+      id: Date.now(),
+      source: '',
+      target: '',
+      description: 'Custom field mapping'
+    }
+    setFormData({
+      ...formData,
+      fieldMappings: [...formData.fieldMappings, newMapping]
+    })
+  }
+
+  const removeFieldMapping = (mappingId: number) => {
+    setFormData({
+      ...formData,
+      fieldMappings: formData.fieldMappings.filter(mapping => mapping.id !== mappingId)
+    })
   }
 
   return (
@@ -288,33 +324,109 @@ export default function IntegrationWizard() {
               {/* Step 3: Data Mapping */}
               {currentStep === 3 && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-bold text-foreground">
-                    Map Your Data Fields
-                  </h2>
-                  <div className="bg-muted p-6 rounded-lg">
-                    <p className="text-foreground font-medium mb-4">
-                      Source → Target Field Mapping
+                  <div className="space-y-4">
+                    <h2 className="text-2xl font-bold text-foreground">
+                      Map Your Data Fields
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Configure how your system's data fields map to GovHub's standardized format
                     </p>
-                    <div className="space-y-3">
-                      {[
-                        { source: 'PatientID', target: 'national_id' },
-                        { source: 'FullName', target: 'name' },
-                        { source: 'DOB', target: 'birth_date' },
-                      ].map((field, idx) => (
-                        <div key={idx} className="flex items-center gap-4">
-                          <Input
-                            disabled
-                            value={field.source}
-                            className="bg-background"
-                          />
-                          <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                          <Input
-                            disabled
-                            value={field.target}
-                            className="bg-background"
-                          />
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground">Field Mappings</h3>
+                        <p className="text-sm text-muted-foreground">Map your source fields to target fields</p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={addFieldMapping}
+                        className="flex items-center gap-2"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Add Mapping
+                      </Button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {formData.fieldMappings.map((mapping) => (
+                        <div key={mapping.id} className="p-4 border border-slate-200 dark:border-slate-700 rounded-lg space-y-4">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium text-muted-foreground">{mapping.description}</p>
+                            {formData.fieldMappings.length > 1 && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeFieldMapping(mapping.id)}
+                                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-950"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                            <div className="space-y-2">
+                              <Label className="text-xs font-medium">Source Field</Label>
+                              <Input
+                                value={mapping.source}
+                                onChange={(e) => handleMappingChange(mapping.id, 'source', e.target.value)}
+                                placeholder="e.g., PatientID"
+                                className={mapping.source ? 'border-blue-500' : ''}
+                              />
+                            </div>
+
+                            <div className="flex justify-center">
+                              <ArrowRight className="h-5 w-5 text-[#FFD700]" />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-xs font-medium">Target Field</Label>
+                              <Select
+                                value={mapping.target}
+                                onValueChange={(value) => handleMappingChange(mapping.id, 'target', value)}
+                              >
+                                <SelectTrigger className={mapping.target ? 'border-green-500' : ''}>
+                                  <SelectValue placeholder="Select target field" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="national_id">national_id</SelectItem>
+                                  <SelectItem value="name">name</SelectItem>
+                                  <SelectItem value="birth_date">birth_date</SelectItem>
+                                  <SelectItem value="email">email</SelectItem>
+                                  <SelectItem value="phone">phone</SelectItem>
+                                  <SelectItem value="address">address</SelectItem>
+                                  <SelectItem value="gender">gender</SelectItem>
+                                  <SelectItem value="status">status</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          {mapping.source && mapping.target && (
+                            <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <span className="text-sm text-green-900 dark:text-green-100">
+                                <code className="bg-green-100 dark:bg-green-900 px-1 rounded">{mapping.source}</code>
+                                {' → '}
+                                <code className="bg-green-100 dark:bg-green-900 px-1 rounded">{mapping.target}</code>
+                                {' mapping configured'}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       ))}
+                    </div>
+
+                    <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
+                      <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">💡 Mapping Tips</h4>
+                      <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                        <li>• Ensure your source field names match exactly what your API returns</li>
+                        <li>• Target fields follow GovHub's standardized data format</li>
+                        <li>• All mappings will be validated in the next step</li>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -407,15 +519,20 @@ export default function IntegrationWizard() {
                   Previous
                 </Button>
                 <Button
-                  onClick={handleNext}
-                  disabled={currentStep === steps.length || !canProceedFromStep(currentStep)}
+                  onClick={currentStep === steps.length ? () => alert('Integration deployed successfully! 🎉') : handleNext}
+                  disabled={currentStep < steps.length && !canProceedFromStep(currentStep)}
                   className={`flex-1 ${
-                    !canProceedFromStep(currentStep) && currentStep !== steps.length
+                    !canProceedFromStep(currentStep) && currentStep < steps.length
                       ? 'opacity-50 cursor-not-allowed'
-                      : ''
+                      : currentStep === steps.length ? 'bg-green-600 hover:bg-green-700' : ''
                   }`}
                 >
-                  {currentStep === steps.length ? 'Complete' : 'Next'}
+                  {currentStep === steps.length ? (
+                    <div className="flex items-center gap-2">
+                      <Wand2 className="h-4 w-4" />
+                      Deploy Integration
+                    </div>
+                  ) : 'Next'}
                 </Button>
               </div>
             </Card>

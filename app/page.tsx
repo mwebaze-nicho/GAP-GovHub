@@ -70,7 +70,7 @@ export default function Dashboard() {
           />
           <MetricsCard
             title="System Uptime"
-            value={metrics.uptime}
+            value={metrics.uptime.toFixed(2)}
             unit="%"
             trend={0.5}
             isPositive={true}

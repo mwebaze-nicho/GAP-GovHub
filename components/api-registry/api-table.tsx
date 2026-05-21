@@ -45,42 +45,42 @@ const statusConfig = {
 
 export function APITable({ apis }: APITableProps) {
   return (
-    <div className="border border-border rounded-lg overflow-hidden">
+    <div className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg overflow-hidden shadow-lg shadow-slate-200/20 dark:shadow-slate-900/20 ring-1 ring-slate-200/10 dark:ring-slate-700/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted hover:bg-muted">
-            <TableHead>API Name</TableHead>
-            <TableHead>Ministry</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Calls/Day</TableHead>
-            <TableHead className="text-right">Response Time</TableHead>
-            <TableHead className="text-right">Uptime</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+          <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-700 dark:hover:to-slate-800 border-b border-slate-200/60 dark:border-slate-700/60">
+            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">API Name</TableHead>
+            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Ministry</TableHead>
+            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Status</TableHead>
+            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Calls/Day</TableHead>
+            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Response Time</TableHead>
+            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Uptime</TableHead>
+            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {apis.map((api) => {
             const statusInfo = statusConfig[api.status]
             return (
-              <TableRow key={api.id}>
+              <TableRow key={api.id} className="border-b border-slate-200/40 dark:border-slate-700/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                 <TableCell>
                   <div>
-                    <p className="font-medium text-foreground">{api.name}</p>
-                    <p className="text-xs text-muted-foreground">{api.version}</p>
+                    <p className="font-medium text-slate-900 dark:text-slate-100">{api.name}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{api.version}</p>
                   </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{api.ministry}</TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">{api.ministry}</TableCell>
                 <TableCell>
                   <Badge className={statusInfo.badge}>{statusInfo.label}</Badge>
                 </TableCell>
-                <TableCell className="text-right text-muted-foreground">
+                <TableCell className="text-right text-slate-600 dark:text-slate-400">
                   {api.callsPerDay.toLocaleString()}
                 </TableCell>
-                <TableCell className="text-right text-muted-foreground">
+                <TableCell className="text-right text-slate-600 dark:text-slate-400">
                   {api.responseTime}ms
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className="text-sm font-medium text-green-600">
+                  <span className="text-sm font-medium text-green-600 dark:text-green-400">
                     {api.uptime}%
                   </span>
                 </TableCell>

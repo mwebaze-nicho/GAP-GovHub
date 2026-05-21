@@ -48,18 +48,18 @@ export default function APIRegistry() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6 bg-gradient-to-r from-slate-50/80 to-white dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-sm">
+          <div className="flex-1 relative group">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500 group-focus-within:text-[#FFD700] transition-colors" />
             <Input
               placeholder="Search APIs or ministries..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 h-10 bg-white/70 dark:bg-slate-900/70 border-slate-200/60 dark:border-slate-700/60 focus-visible:border-[#FFD700] focus-visible:ring-[#FFD700]/20 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-48">
+            <SelectTrigger className="w-full sm:w-48 h-10 bg-white/70 dark:bg-slate-900/70">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>

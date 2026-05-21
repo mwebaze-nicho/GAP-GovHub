@@ -138,7 +138,7 @@ export default function DataTransformation() {
 
                 {/* Right Column - Code */}
                 <div className="relative">
-                  <div className="border border-border rounded-lg overflow-x-auto">
+                  <div className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg overflow-x-auto shadow-sm shadow-slate-200/10 dark:shadow-slate-900/10 ring-1 ring-slate-200/10 dark:ring-slate-700/10">
                     <pre className="bg-muted p-3 sm:p-4 pr-12 sm:pr-14 text-xs font-mono text-muted-foreground whitespace-pre">
                       <code>{transform.code}</code>
                     </pre>

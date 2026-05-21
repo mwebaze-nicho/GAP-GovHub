@@ -106,6 +106,66 @@ export default function IntegrationWizard() {
     }))
   }
 
+  const generateTransformationCode = () => {
+    const rules = formData.fieldMappings
+      .filter(mapping => mapping.source && mapping.target)
+      .map(mapping => ({
+        field: mapping.source,
+        type: 'map',
+        target: mapping.target
+      }))
+
+    return JSON.stringify({
+      sourceFields: formData.fieldMappings.map(m => m.source).filter(Boolean),
+      targetFields: formData.fieldMappings.map(m => m.target).filter(Boolean),
+      transformRules: rules
+    }, null, 2)
+  }
+
+  const saveTransformation = () => {
+    const transformation = {
+      id: Date.now(),
+      name: `${formData.ministry} Integration`,
+      source: `${formData.ministry} API`,
+      sourceUrl: formData.baseUrl,
+      target: 'GovHub Data Exchange',
+      status: 'active',
+      mappings: formData.fieldMappings.filter(m => m.source && m.target).length,
+      code: generateTransformationCode(),
+      createdAt: new Date().toISOString()
+    }
+
+    // Get existing transformations
+    const existingTransformations = localStorage.getItem('govhub-transformations')
+    let transformations = []
+
+    if (existingTransformations) {
+      try {
+        transformations = JSON.parse(existingTransformations)
+      } catch (error) {
+        console.error('Error parsing existing transformations:', error)
+      }
+    }
+
+    // Add new transformation
+    transformations.unshift(transformation)
+
+    // Save back to localStorage
+    localStorage.setItem('govhub-transformations', JSON.stringify(transformations))
+
+    return transformation
+  }
+
+  const handleDeployIntegration = () => {
+    try {
+      const newTransformation = saveTransformation()
+      alert(`🎉 Integration deployed successfully!\n\nTransformation "${newTransformation.name}" has been created and is now available on the Data Transformation page.`)
+    } catch (error) {
+      console.error('Error deploying integration:', error)
+      alert('❌ Deployment failed. Please try again.')
+    }
+  }
+
   return (
     <MainLayout>
       <BreadcrumbNav />
@@ -530,7 +590,7 @@ export default function IntegrationWizard() {
                   Previous
                 </Button>
                 <Button
-                  onClick={currentStep === steps.length ? () => alert('Integration deployed successfully! 🎉') : handleNext}
+                  onClick={currentStep === steps.length ? handleDeployIntegration : handleNext}
                   disabled={currentStep < steps.length && !canProceedFromStep(currentStep)}
                   className={`flex-1 ${
                     !canProceedFromStep(currentStep) && currentStep < steps.length

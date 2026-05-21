@@ -5,8 +5,8 @@ import { BreadcrumbNav } from '@/components/layout/breadcrumb-nav'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Zap, Copy, CheckCircle } from 'lucide-react'
-import { useState } from 'react'
+import { Zap, Copy, CheckCircle, Trash2, ExternalLink } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
@@ -15,12 +15,12 @@ export default function DataTransformation() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [actionFeedback, setActionFeedback] = useState<{[key: number]: string}>({})
   const [testingTransform, setTestingTransform] = useState<number | null>(null)
-
-  const transformations = [
+  const [transformations, setTransformations] = useState([
     {
       id: 1,
       name: 'Patient Record Normalization',
       source: 'Health Ministry API',
+      sourceUrl: 'https://api.health.gov.ug/v1',
       target: 'National Data Hub',
       status: 'active',
       mappings: 12,
@@ -38,6 +38,7 @@ export default function DataTransformation() {
       id: 2,
       name: 'Education System Integration',
       source: 'Ministry of Education API',
+      sourceUrl: 'https://api.education.gov.ug/v1',
       target: 'Student Portal',
       status: 'active',
       mappings: 18,
@@ -55,6 +56,7 @@ export default function DataTransformation() {
       id: 3,
       name: 'Tax Data Aggregation',
       source: 'URA API',
+      sourceUrl: 'https://api.ura.gov.ug/v2',
       target: 'Finance Dashboard',
       status: 'maintenance',
       mappings: 8,
@@ -68,7 +70,28 @@ export default function DataTransformation() {
   ]
 }`,
     },
-  ]
+  ])
+
+  // Load transformations from localStorage on component mount
+  useEffect(() => {
+    const loadTransformations = () => {
+      const stored = localStorage.getItem('govhub-transformations')
+      if (stored) {
+        try {
+          const customTransformations = JSON.parse(stored)
+          // Merge custom transformations with default ones
+          setTransformations(prev => [
+            ...customTransformations,
+            ...prev // Default transformations go at the end
+          ])
+        } catch (error) {
+          console.error('Error loading transformations:', error)
+        }
+      }
+    }
+
+    loadTransformations()
+  }, [])
 
   const copyToClipboard = (code: string, id: string) => {
     navigator.clipboard.writeText(code)
@@ -131,6 +154,37 @@ export default function DataTransformation() {
     }, 2000)
   }
 
+  const handleDeleteTransform = (transformId: number, transformName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${transformName}"?\n\nThis action cannot be undone.`)) {
+      setActionFeedback(prev => ({...prev, [transformId]: `Deleting transformation...`}))
+
+      // Update local state
+      setTransformations(prev => prev.filter(t => t.id !== transformId))
+
+      // Update localStorage (only for custom transformations with high IDs)
+      if (transformId > 1000) { // Custom transformations have timestamp IDs
+        const existingTransformations = localStorage.getItem('govhub-transformations')
+        if (existingTransformations) {
+          try {
+            const transformations = JSON.parse(existingTransformations)
+            const updatedTransformations = transformations.filter((t: any) => t.id !== transformId)
+            localStorage.setItem('govhub-transformations', JSON.stringify(updatedTransformations))
+          } catch (error) {
+            console.error('Error updating localStorage:', error)
+          }
+        }
+      }
+
+      setTimeout(() => {
+        setActionFeedback(prev => {
+          const newState = {...prev}
+          delete newState[transformId]
+          return newState
+        })
+      }, 1000)
+    }
+  }
+
   return (
     <MainLayout>
       <BreadcrumbNav />
@@ -177,6 +231,19 @@ export default function DataTransformation() {
                       <p className="text-xs sm:text-sm text-muted-foreground">
                         {transform.source} → {transform.target}
                       </p>
+                      {(transform as any).sourceUrl && (
+                        <div className="flex items-center gap-1 mt-2">
+                          <ExternalLink className="h-3 w-3 text-muted-foreground" />
+                          <a
+                            href={(transform as any).sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
+                          >
+                            {(transform as any).sourceUrl}
+                          </a>
+                        </div>
+                      )}
                     </div>
                     <Badge
                       className={
@@ -219,6 +286,14 @@ export default function DataTransformation() {
                         onClick={() => handleDeployTransform(transform.id, transform.name)}
                       >
                         Deploy
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs hover:bg-red-50 hover:border-red-300 hover:text-red-700 dark:hover:bg-red-950 dark:hover:border-red-700 dark:hover:text-red-300"
+                        onClick={() => handleDeleteTransform(transform.id, transform.name)}
+                      >
+                        <Trash2 className="h-3 w-3" />
                       </Button>
                     </div>
                   </div>

@@ -86,13 +86,13 @@ export default function IntegrationWizard() {
       id: Date.now(),
       source: '',
       target: '',
-      description: 'Custom field mapping'
+      description: 'New custom field mapping'
     }
     console.log('Current mappings:', formData.fieldMappings.length)
     setFormData(prevData => {
       const newData = {
         ...prevData,
-        fieldMappings: [...prevData.fieldMappings, newMapping]
+        fieldMappings: [newMapping, ...prevData.fieldMappings]
       }
       console.log('New mappings count:', newData.fieldMappings.length)
       return newData

@@ -46,17 +46,17 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-50 h-screen w-64 border-r border-border bg-gradient-to-b from-sidebar to-sidebar/95 backdrop-blur-sm text-sidebar-foreground transition-transform duration-300 lg:relative lg:z-0 lg:translate-x-0 shadow-lg',
+          'fixed left-0 top-0 z-50 h-screen w-64 bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-sidebar-foreground transition-transform duration-300 lg:relative lg:z-0 lg:translate-x-0 shadow-2xl border-r border-slate-200/50 dark:border-slate-700/50',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-sidebar-border lg:hidden">
-            <h2 className="font-bold">Navigation</h2>
+          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700 shadow-sm lg:hidden">
+            <h2 className="font-bold text-slate-800 dark:text-slate-200">Navigation</h2>
             <button
               onClick={onClose}
-              className="text-sidebar-foreground hover:opacity-70"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-600/60 rounded-lg p-1 transition-colors"
               aria-label="Close sidebar"
             >
               <X className="h-5 w-5" />
@@ -78,10 +78,10 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
                       href={item.href}
                       onClick={onClose}
                       className={cn(
-                        'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden',
+                        'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden shadow-sm',
                         isActive
-                          ? 'bg-gradient-to-r from-[#FFD700] to-[#DC143C] text-white shadow-md border border-[#FFD700]/20'
-                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-sm hover:translate-x-1'
+                          ? 'bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#DC143C] text-white shadow-lg ring-2 ring-[#FFD700]/30 transform scale-[1.02]'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-slate-700/80 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md hover:translate-x-1 backdrop-blur-sm'
                       )}
                     >
                       <Icon className="h-5 w-5" />
@@ -94,9 +94,12 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-sidebar-border px-6 py-4">
-            <p className="text-xs text-sidebar-foreground/60">
-              Ministry of ICT &copy; 2024
+          <div className="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700 px-6 py-4 shadow-inner">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
+              Ministry of ICT &copy; 2026
+            </p>
+            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+              Republic of Uganda
             </p>
           </div>
         </div>

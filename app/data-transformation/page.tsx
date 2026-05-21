@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Zap, Copy, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
+import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 export default function DataTransformation() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
@@ -138,14 +139,17 @@ export default function DataTransformation() {
 
                 {/* Right Column - Code */}
                 <div className="relative">
-                  <div className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg overflow-x-auto shadow-sm shadow-slate-200/10 dark:shadow-slate-900/10 ring-1 ring-slate-200/10 dark:ring-slate-700/10">
+                  <OverflowIndicator
+                    direction="horizontal"
+                    className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm shadow-slate-200/10 dark:shadow-slate-900/10 ring-1 ring-slate-200/10 dark:ring-slate-700/10 h-48"
+                  >
                     <pre className="bg-muted p-3 sm:p-4 pr-12 sm:pr-14 text-xs font-mono text-muted-foreground whitespace-pre">
                       <code>{transform.code}</code>
                     </pre>
-                  </div>
+                  </OverflowIndicator>
                   <button
                     onClick={() => copyToClipboard(transform.code, transform.id.toString())}
-                    className="absolute top-2 right-2 p-1.5 sm:p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors z-10"
+                    className="absolute top-2 right-2 p-1.5 sm:p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors z-20"
                   >
                     {copiedCode === transform.id.toString() ? (
                       <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />

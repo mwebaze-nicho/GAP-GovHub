@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { BookOpen, Copy, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
+import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 export default function APIDocs() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
@@ -124,12 +125,17 @@ export default function APIDocs() {
 
                 <TabsContent value="get" className="space-y-4 mt-4">
                   <div className="relative">
-                    <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-xs text-muted-foreground">
-                      <code>{api.getExample}</code>
-                    </pre>
+                    <OverflowIndicator
+                      direction="horizontal"
+                      className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm h-32"
+                    >
+                      <pre className="bg-muted p-4 text-xs text-muted-foreground whitespace-pre">
+                        <code>{api.getExample}</code>
+                      </pre>
+                    </OverflowIndicator>
                     <button
                       onClick={() => copyToClipboard(api.getExample, `${api.id}-get`)}
-                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors"
+                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors z-20"
                     >
                       {copiedCode === `${api.id}-get` ? (
                         <CheckCircle className="h-4 w-4 text-green-600" />
@@ -142,12 +148,17 @@ export default function APIDocs() {
 
                 <TabsContent value="post" className="space-y-4 mt-4">
                   <div className="relative">
-                    <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-xs text-muted-foreground">
-                      <code>{api.postExample}</code>
-                    </pre>
+                    <OverflowIndicator
+                      direction="horizontal"
+                      className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm h-32"
+                    >
+                      <pre className="bg-muted p-4 text-xs text-muted-foreground whitespace-pre">
+                        <code>{api.postExample}</code>
+                      </pre>
+                    </OverflowIndicator>
                     <button
                       onClick={() => copyToClipboard(api.postExample, `${api.id}-post`)}
-                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors"
+                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors z-20"
                     >
                       {copiedCode === `${api.id}-post` ? (
                         <CheckCircle className="h-4 w-4 text-green-600" />
@@ -160,12 +171,17 @@ export default function APIDocs() {
 
                 <TabsContent value="response" className="space-y-4 mt-4">
                   <div className="relative">
-                    <pre className="bg-muted p-4 rounded-lg overflow-x-auto text-xs text-muted-foreground">
-                      <code>{api.getResponse}</code>
-                    </pre>
+                    <OverflowIndicator
+                      direction="horizontal"
+                      className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm h-40"
+                    >
+                      <pre className="bg-muted p-4 text-xs text-muted-foreground whitespace-pre">
+                        <code>{api.getResponse}</code>
+                      </pre>
+                    </OverflowIndicator>
                     <button
                       onClick={() => copyToClipboard(api.getResponse, `${api.id}-response`)}
-                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors"
+                      className="absolute top-2 right-2 p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors z-20"
                     >
                       {copiedCode === `${api.id}-response` ? (
                         <CheckCircle className="h-4 w-4 text-green-600" />

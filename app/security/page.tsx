@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import { apiKeys, auditLogs } from '@/lib/mock-data'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Lock, Copy, Trash2, Eye, EyeOff, Plus, AlertCircle } from 'lucide-react'
+import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 export default function Security() {
   const [visibleKeys, setVisibleKeys] = useState<string[]>([])
@@ -89,16 +90,19 @@ export default function Security() {
               </Button>
             </div>
 
-            <Card>
+            <OverflowIndicator
+              direction="horizontal"
+              className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-lg shadow-slate-200/20 dark:shadow-slate-900/20 ring-1 ring-slate-200/10 dark:ring-slate-700/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
+            >
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted hover:bg-muted">
-                    <TableHead>Name</TableHead>
-                    <TableHead>API Key</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead>Last Used</TableHead>
-                    <TableHead>Permissions</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-700 dark:hover:to-slate-800 border-b border-slate-200/60 dark:border-slate-700/60">
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Name</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">API Key</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Created</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Last Used</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Permissions</TableHead>
+                    <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -106,9 +110,9 @@ export default function Security() {
                     const isVisible = visibleKeys.includes(keyItem.id)
 
                     return (
-                      <TableRow key={keyItem.id}>
+                      <TableRow key={keyItem.id} className="border-b border-slate-200/40 dark:border-slate-700/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                         <TableCell>
-                          <p className="font-medium text-foreground">{keyItem.name}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100">{keyItem.name}</p>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -117,10 +121,10 @@ export default function Security() {
                             </code>
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                           {formatDate(keyItem.createdAt)}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                           {formatDate(keyItem.lastUsed)}
                         </TableCell>
                         <TableCell>
@@ -134,30 +138,31 @@ export default function Security() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => toggleKeyVisibility(keyItem.id)}
-                              className="p-1 hover:bg-muted rounded transition-colors"
-                              title={isVisible ? 'Hide key' : 'Show key'}
-                            >
-                              {isVisible ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </button>
-                            <button
-                              onClick={() => copyToClipboard(keyItem.key, keyItem.id)}
-                              className="p-1 hover:bg-muted rounded transition-colors"
-                              title="Copy key"
-                            >
-                              <Copy className="h-4 w-4" />
-                            </button>
-                            <button
-                              className="p-1 hover:bg-red-100 dark:hover:bg-red-950 rounded transition-colors text-red-600"
-                              title="Delete key"
-                            >
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <button
+                                onClick={() => toggleKeyVisibility(keyItem.id)}
+                                className="h-4 w-4"
+                                title={isVisible ? 'Hide key' : 'Show key'}
+                              >
+                                {isVisible ? (
+                                  <EyeOff className="h-4 w-4" />
+                                ) : (
+                                  <Eye className="h-4 w-4" />
+                                )}
+                              </button>
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <button
+                                onClick={() => copyToClipboard(keyItem.key, keyItem.id)}
+                                className="h-4 w-4"
+                                title="Copy key"
+                              >
+                                <Copy className="h-4 w-4" />
+                              </button>
+                            </Button>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-100 dark:hover:bg-red-950">
                               <Trash2 className="h-4 w-4" />
-                            </button>
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -165,20 +170,23 @@ export default function Security() {
                   })}
                 </TableBody>
               </Table>
-            </Card>
+            </OverflowIndicator>
           </TabsContent>
 
           {/* Audit Logs Tab */}
           <TabsContent value="audit" className="space-y-6 mt-6">
-            <Card>
+            <OverflowIndicator
+              direction="horizontal"
+              className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-lg shadow-slate-200/20 dark:shadow-slate-900/20 ring-1 ring-slate-200/10 dark:ring-slate-700/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
+            >
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-muted hover:bg-muted">
-                    <TableHead>Event</TableHead>
-                    <TableHead>User</TableHead>
-                    <TableHead>Timestamp</TableHead>
-                    <TableHead>Details</TableHead>
-                    <TableHead>Severity</TableHead>
+                  <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-700 dark:hover:to-slate-800 border-b border-slate-200/60 dark:border-slate-700/60">
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Event</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">User</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Timestamp</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Details</TableHead>
+                    <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Severity</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -190,17 +198,17 @@ export default function Security() {
                     }
 
                     return (
-                      <TableRow key={log.id}>
+                      <TableRow key={log.id} className="border-b border-slate-200/40 dark:border-slate-700/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                         <TableCell>
-                          <p className="font-medium text-foreground">{log.event}</p>
+                          <p className="font-medium text-slate-900 dark:text-slate-100">{log.event}</p>
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                           {log.user}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                           {log.timestamp.toLocaleString()}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                           {log.details}
                         </TableCell>
                         <TableCell>
@@ -213,7 +221,7 @@ export default function Security() {
                   })}
                 </TableBody>
               </Table>
-            </Card>
+            </OverflowIndicator>
           </TabsContent>
         </Tabs>
       </div>

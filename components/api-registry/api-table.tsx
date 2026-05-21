@@ -11,6 +11,7 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Eye, Settings } from 'lucide-react'
+import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 interface API {
   id: string
@@ -45,7 +46,10 @@ const statusConfig = {
 
 export function APITable({ apis }: APITableProps) {
   return (
-    <div className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg overflow-hidden shadow-lg shadow-slate-200/20 dark:shadow-slate-900/20 ring-1 ring-slate-200/10 dark:ring-slate-700/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+    <OverflowIndicator
+      direction="horizontal"
+      className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-lg shadow-slate-200/20 dark:shadow-slate-900/20 ring-1 ring-slate-200/10 dark:ring-slate-700/10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm"
+    >
       <Table>
         <TableHeader>
           <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-700 dark:hover:to-slate-800 border-b border-slate-200/60 dark:border-slate-700/60">
@@ -99,6 +103,6 @@ export function APITable({ apis }: APITableProps) {
           })}
         </TableBody>
       </Table>
-    </div>
+    </OverflowIndicator>
   )
 }

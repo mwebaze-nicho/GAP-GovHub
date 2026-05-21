@@ -2,6 +2,7 @@ import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle, AlertCircle, Info, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 interface Activity {
   id: number
@@ -27,35 +28,40 @@ export function ActivityFeed({ activities, title = 'Recent Activity' }: Activity
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold text-foreground mb-4">{title}</h3>
-      <div className="space-y-4">
-        {activities.map((activity) => {
-          const config = statusConfig[activity.status]
-          const Icon = config.icon
+      <OverflowIndicator
+        direction="vertical"
+        className="border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm max-h-96"
+      >
+        <div className="space-y-4 p-4">
+          {activities.map((activity) => {
+            const config = statusConfig[activity.status]
+            const Icon = config.icon
 
-          return (
-            <div key={activity.id} className={cn("flex gap-4 p-3 rounded-lg", config.bg)}>
-              <div className="flex-shrink-0">
-                <Icon className={cn('h-5 w-5', config.color)} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {activity.action}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {activity.description}
-                    </p>
+            return (
+              <div key={activity.id} className={cn("flex gap-4 p-3 rounded-lg", config.bg)}>
+                <div className="flex-shrink-0">
+                  <Icon className={cn('h-5 w-5', config.color)} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {activity.action}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {activity.description}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-xs whitespace-nowrap">
+                      {formatTime(activity.timestamp)}
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="text-xs whitespace-nowrap">
-                    {formatTime(activity.timestamp)}
-                  </Badge>
                 </div>
               </div>
-            </div>
-          )
-        })}
-      </div>
+            )
+          })}
+        </div>
+      </OverflowIndicator>
     </Card>
   )
 }

@@ -13,7 +13,7 @@ import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 export default function DataTransformation() {
   const router = useRouter()
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
-  const [actionFeedback, setActionFeedback] = useState<string | null>(null)
+  const [actionFeedback, setActionFeedback] = useState<{[key: number]: string}>({})
   const [testingTransform, setTestingTransform] = useState<number | null>(null)
 
   const transformations = [
@@ -78,40 +78,56 @@ export default function DataTransformation() {
 
   const handleEditTransform = (transformId: number, transformName: string) => {
     // In a real app, this would open an edit modal or navigate to edit page
-    setActionFeedback(`Opening editor for ${transformName}...`)
+    setActionFeedback(prev => ({...prev, [transformId]: `Opening editor...`}))
     setTimeout(() => {
-      setActionFeedback(`Editor opened for ${transformName}. Redirecting to Integration Wizard...`)
+      setActionFeedback(prev => ({...prev, [transformId]: `Redirecting to editor...`}))
       setTimeout(() => {
         router.push('/integration-wizard?step=3')
-        setActionFeedback(null)
+        setActionFeedback(prev => {
+          const newState = {...prev}
+          delete newState[transformId]
+          return newState
+        })
       }, 1500)
     }, 1000)
   }
 
   const handleTestTransform = async (transformId: number, transformName: string) => {
     setTestingTransform(transformId)
-    setActionFeedback(`Testing ${transformName} transformation...`)
+    setActionFeedback(prev => ({...prev, [transformId]: `Testing transformation...`}))
 
     // Simulate API testing with realistic delay
     setTimeout(() => {
       const isSuccess = Math.random() > 0.2 // 80% success rate
       if (isSuccess) {
-        setActionFeedback(`✅ Test passed! ${transformName} transformation is working correctly.`)
+        setActionFeedback(prev => ({...prev, [transformId]: `✅ Test passed! Working correctly.`}))
       } else {
-        setActionFeedback(`❌ Test failed! ${transformName} has validation errors in field mapping.`)
+        setActionFeedback(prev => ({...prev, [transformId]: `❌ Test failed! Field mapping errors.`}))
       }
       setTestingTransform(null)
-      setTimeout(() => setActionFeedback(null), 4000)
+      setTimeout(() => {
+        setActionFeedback(prev => {
+          const newState = {...prev}
+          delete newState[transformId]
+          return newState
+        })
+      }, 4000)
     }, 2500)
   }
 
   const handleDeployTransform = (transformId: number, transformName: string) => {
-    setActionFeedback(`Deploying ${transformName} to production...`)
+    setActionFeedback(prev => ({...prev, [transformId]: `Deploying to production...`}))
 
     // Simulate deployment process
     setTimeout(() => {
-      setActionFeedback(`🚀 ${transformName} successfully deployed! Changes are now live.`)
-      setTimeout(() => setActionFeedback(null), 3000)
+      setActionFeedback(prev => ({...prev, [transformId]: `🚀 Successfully deployed! Changes are live.`}))
+      setTimeout(() => {
+        setActionFeedback(prev => {
+          const newState = {...prev}
+          delete newState[transformId]
+          return newState
+        })
+      }, 3000)
     }, 2000)
   }
 
@@ -137,19 +153,19 @@ export default function DataTransformation() {
           </Button>
         </div>
 
-        {/* Action Feedback */}
-        {actionFeedback && (
-          <div className="fixed top-4 right-4 z-50 max-w-md">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 shadow-lg">
-              <p className="text-sm text-foreground">{actionFeedback}</p>
-            </div>
-          </div>
-        )}
 
         {/* Transformations Grid */}
         <div className="grid gap-4 sm:gap-6">
           {transformations.map((transform) => (
-            <Card key={transform.id} className="p-4 sm:p-6">
+            <Card key={transform.id} className="p-4 sm:p-6 relative">
+              {/* Card-specific Action Feedback */}
+              {actionFeedback[transform.id] && (
+                <div className="absolute top-2 right-2 z-10">
+                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 shadow-lg max-w-xs">
+                    <p className="text-xs text-foreground font-medium">{actionFeedback[transform.id]}</p>
+                  </div>
+                </div>
+              )}
               <div className="space-y-6 xl:space-y-0 xl:grid xl:grid-cols-2 xl:gap-8">
                 {/* Left Column */}
                 <div>

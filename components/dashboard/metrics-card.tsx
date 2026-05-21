@@ -43,7 +43,7 @@ export function MetricsCard({
           )}
         </div>
         {icon && (
-          <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-br from-[#FFD700]/20 to-[#DC143C]/20 text-[#DC143C] dark:text-[#FFD700] shadow-md">
+          <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-gradient-to-br from-[#FFD700]/20 to-[#DC143C]/20 text-[#DC143C] dark:text-[#FFD700] shadow-md">
             {icon}
           </div>
         )}

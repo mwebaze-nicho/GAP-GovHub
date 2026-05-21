@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { MainLayout } from '@/components/layout/main-layout'
 import { BreadcrumbNav } from '@/components/layout/breadcrumb-nav'
 import { APITable } from '@/components/api-registry/api-table'
@@ -17,6 +18,7 @@ import {
 import { Search, Plus } from 'lucide-react'
 
 export default function APIRegistry() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
@@ -41,7 +43,10 @@ export default function APIRegistry() {
               Discover and manage all government APIs
             </p>
           </div>
-          <Button className="mt-4 md:mt-0 w-full md:w-auto">
+          <Button
+            onClick={() => router.push('/integration-wizard')}
+            className="mt-4 md:mt-0 w-full md:w-auto bg-[#FFD700] hover:bg-[#FFD700]/90 text-black font-medium"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Register API
           </Button>

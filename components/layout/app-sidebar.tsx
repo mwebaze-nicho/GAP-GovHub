@@ -78,10 +78,10 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
                       href={item.href}
                       onClick={onClose}
                       className={cn(
-                        'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden shadow-sm',
+                        'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden',
                         isActive
-                          ? 'bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#DC143C] text-white shadow-lg ring-2 ring-[#FFD700]/30 transform scale-[1.02]'
-                          : 'text-slate-700 dark:text-slate-300 hover:bg-white/80 dark:hover:bg-slate-700/80 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-md hover:translate-x-1 backdrop-blur-sm'
+                          ? 'bg-gradient-to-r from-[#FFD700]/20 to-[#DC143C]/15 text-[#B8860B] dark:text-[#FFD700] border border-[#FFD700]/30 shadow-md shadow-[#FFD700]/10 backdrop-blur-sm font-semibold'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/70 dark:hover:bg-slate-700/70 hover:text-slate-900 dark:hover:text-slate-100 hover:shadow-sm hover:translate-x-1 backdrop-blur-sm'
                       )}
                     >
                       <Icon className="h-5 w-5" />

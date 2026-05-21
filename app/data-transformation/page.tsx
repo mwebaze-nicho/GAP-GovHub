@@ -137,22 +137,22 @@ export default function DataTransformation() {
                 </div>
 
                 {/* Right Column - Code */}
-                <div>
-                  <div className="relative border border-border rounded-lg overflow-x-auto">
-                    <pre className="bg-muted p-3 sm:p-4 text-xs font-mono text-muted-foreground whitespace-pre">
+                <div className="relative">
+                  <div className="border border-border rounded-lg overflow-x-auto">
+                    <pre className="bg-muted p-3 sm:p-4 pr-12 sm:pr-14 text-xs font-mono text-muted-foreground whitespace-pre">
                       <code>{transform.code}</code>
                     </pre>
-                    <button
-                      onClick={() => copyToClipboard(transform.code, transform.id.toString())}
-                      className="absolute top-2 right-2 p-1.5 sm:p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors"
-                    >
-                      {copiedCode === transform.id.toString() ? (
-                        <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
-                      ) : (
-                        <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
-                      )}
-                    </button>
                   </div>
+                  <button
+                    onClick={() => copyToClipboard(transform.code, transform.id.toString())}
+                    className="absolute top-2 right-2 p-1.5 sm:p-2 bg-primary/20 hover:bg-primary/30 rounded transition-colors z-10"
+                  >
+                    {copiedCode === transform.id.toString() ? (
+                      <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+                    ) : (
+                      <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
+                    )}
+                  </button>
                 </div>
               </div>
             </Card>

@@ -7,9 +7,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Zap, Copy, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 export default function DataTransformation() {
+  const router = useRouter()
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
 
   const transformations = [
@@ -85,7 +87,10 @@ export default function DataTransformation() {
               Transform and normalize data between government APIs
             </p>
           </div>
-          <Button className="w-full sm:w-auto">
+          <Button
+            onClick={() => router.push('/integration-wizard?step=3')}
+            className="w-full sm:w-auto bg-[#FFD700] hover:bg-[#FFD700]/90 text-black font-medium"
+          >
             <Zap className="h-4 w-4 mr-2" />
             Create Transformation
           </Button>

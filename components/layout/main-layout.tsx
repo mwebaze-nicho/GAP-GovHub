@@ -17,8 +17,8 @@ export function MainLayout({ children }: MainLayoutProps) {
       <div className="flex-1 flex flex-col overflow-hidden">
         <AppHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
         <main className="flex-1 overflow-auto bg-gradient-to-b from-background/50 to-background/80 backdrop-blur-sm">
-          <div className="container mx-auto p-4 md:p-6 space-y-6">
-            <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md rounded-xl shadow-lg border border-white/20 dark:border-slate-700/20 p-6">
+          <div className="container mx-auto p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+            <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-md rounded-lg sm:rounded-xl shadow-lg border border-white/20 dark:border-slate-700/20 p-4 sm:p-6">
               {children}
             </div>
           </div>

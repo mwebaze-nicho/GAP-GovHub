@@ -95,12 +95,29 @@ export function AppSidebar({ open = false, onClose }: AppSidebarProps) {
 
           {/* Footer */}
           <div className="bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-700 px-6 py-4 shadow-inner">
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              Ministry of ICT &copy; 2026
-            </p>
-            <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
-              Republic of Uganda
-            </p>
+            <div className="flex items-center gap-2 sm:gap-3 mb-3">
+              <img
+                src="https://ict.go.ug/site/ictlogo.png"
+                alt="Ministry of ICT Logo"
+                className="h-6 sm:h-8 w-auto object-contain flex-shrink-0"
+              />
+              <div className="flex flex-col min-w-0 flex-1">
+                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
+                  Ministry of ICT
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-500 truncate">
+                  & National Guidance
+                </p>
+              </div>
+            </div>
+            <div className="border-t border-slate-200/50 dark:border-slate-600/50 pt-3">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
+                &copy; 2026 Republic of Uganda
+              </p>
+              {/* <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+                All rights reserved
+              </p> */}
+            </div>
           </div>
         </div>
       </aside>

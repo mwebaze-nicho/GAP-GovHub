@@ -122,6 +122,97 @@ export default function IntegrationWizard() {
     }, null, 2)
   }
 
+  const generateApiId = () => {
+    return `api-${Date.now()}`
+  }
+
+  const generateMinistryId = (ministryName: string) => {
+    const ministryMap: {[key: string]: string} = {
+      'Ministry of Health': 'moh',
+      'Ministry of Education': 'moe',
+      'Ministry of Finance': 'mof',
+      'Ministry of Agriculture': 'moa',
+      'Ministry of Justice': 'moj',
+      'Ministry of ICT': 'moict',
+      'Ministry of Trade': 'mot',
+      'Ministry of Defense': 'mod'
+    }
+    return ministryMap[ministryName] || 'unknown'
+  }
+
+  const generateApiName = (ministry: string, systemType: string) => {
+    // Create more descriptive API names based on ministry
+    const ministryPrefixes: {[key: string]: string} = {
+      'Ministry of Health': 'Health Records',
+      'Ministry of Education': 'Education Management System',
+      'Ministry of Finance': 'Financial Services',
+      'Ministry of Agriculture': 'Agricultural Data',
+      'Ministry of Justice': 'Justice System',
+      'Ministry of ICT': 'Digital Services',
+      'Ministry of Trade': 'Trade & Commerce',
+      'Ministry of Defense': 'Defense Systems'
+    }
+
+    const prefix = ministryPrefixes[ministry] || ministry
+    const typeLabel = systemType?.toUpperCase() || 'API'
+
+    return `${prefix} ${typeLabel}`
+  }
+
+  const registerApiToRegistry = () => {
+    // Generate unique ID
+    const apiId = generateApiId()
+
+    // Create a new API object for the registry
+    const newApi = {
+      id: apiId,
+      name: generateApiName(formData.ministry, formData.systemType),
+      ministry: formData.ministry,
+      ministryId: generateMinistryId(formData.ministry),
+      status: 'active' as const,
+      endpoint: formData.baseUrl,
+      callsPerDay: 0,
+      uptime: 100.0,
+      responseTime: 0,
+      version: 'v1.0.0',
+      lastUpdated: new Date(),
+      description: `${formData.systemType?.toUpperCase() || 'API'} integration created via System Integration Wizard for ${formData.ministry}`,
+      methods: ['GET', 'POST'], // Default methods
+      apiKey: formData.apiKey, // Store the API key for authentication
+      authType: formData.authType, // Store the authentication type
+    }
+
+    // Get existing registered APIs from localStorage
+    const existingApis = localStorage.getItem('govhub-registered-apis')
+    let registeredApis: any[] = []
+
+    if (existingApis) {
+      try {
+        registeredApis = JSON.parse(existingApis)
+      } catch (error) {
+        console.error('Error loading existing APIs:', error)
+      }
+    }
+
+    // Check if API already exists to avoid duplicates
+    const apiExists = registeredApis.some(api =>
+      api.endpoint === formData.baseUrl && api.ministry === formData.ministry
+    )
+
+    if (!apiExists) {
+      // Add the new API to the beginning of the list
+      const updatedApis = [newApi, ...registeredApis]
+
+      // Save to localStorage
+      localStorage.setItem('govhub-registered-apis', JSON.stringify(updatedApis))
+      console.log('API registered to registry:', newApi)
+      return newApi
+    } else {
+      console.log('API already exists in registry')
+      return null
+    }
+  }
+
   const saveTransformation = () => {
     const transformation = {
       id: Date.now(),
@@ -158,8 +249,21 @@ export default function IntegrationWizard() {
 
   const handleDeployIntegration = () => {
     try {
+      // Save the transformation
       const newTransformation = saveTransformation()
-      alert(`🎉 Integration deployed successfully!\n\nTransformation "${newTransformation.name}" has been created and is now available on the Data Transformation page.`)
+
+      // Register the API to the registry
+      const newApi = registerApiToRegistry()
+
+      let successMessage = `🎉 Integration deployed successfully!\n\nTransformation "${newTransformation.name}" has been created and is now available on the Data Transformation page.`
+
+      if (newApi) {
+        successMessage += `\n\nAPI "${newApi.name}" has also been registered in the API Registry.`
+      } else {
+        successMessage += `\n\nNote: API already exists in the API Registry.`
+      }
+
+      alert(successMessage)
     } catch (error) {
       console.error('Error deploying integration:', error)
       alert('❌ Deployment failed. Please try again.')

@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { MainLayout } from '@/components/layout/main-layout'
 import { BreadcrumbNav } from '@/components/layout/breadcrumb-nav'
 import { APITable } from '@/components/api-registry/api-table'
-import { apis } from '@/lib/mock-data'
+import { apis as defaultApis } from '@/lib/mock-data'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -21,6 +21,41 @@ export default function APIRegistry() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [apis, setApis] = useState<any[]>([])
+
+  // Load APIs from localStorage and combine with default APIs
+  useEffect(() => {
+    const loadApis = () => {
+      const stored = localStorage.getItem('govhub-registered-apis')
+      let customApis: any[] = []
+
+      if (stored) {
+        try {
+          customApis = JSON.parse(stored)
+        } catch (error) {
+          console.error('Error loading registered APIs:', error)
+        }
+      }
+
+      // Combine custom APIs with default APIs
+      setApis([...customApis, ...defaultApis])
+    }
+
+    loadApis()
+
+    // Listen for storage changes to sync across tabs/windows
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'govhub-registered-apis') {
+        loadApis()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
 
   const filteredAPIs = apis.filter((api) => {
     const matchesSearch =
@@ -29,6 +64,10 @@ export default function APIRegistry() {
     const matchesStatus = statusFilter === 'all' || api.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  const navigateToIntegrationWizard = () => {
+    router.push('/integration-wizard')
+  }
 
   return (
     <MainLayout>
@@ -44,7 +83,7 @@ export default function APIRegistry() {
             </p>
           </div>
           <Button
-            onClick={() => router.push('/integration-wizard')}
+            onClick={navigateToIntegrationWizard}
             className="mt-4 md:mt-0 w-full md:w-auto bg-[#FFD700] hover:bg-[#FFD700]/90 text-black font-medium"
           >
             <Plus className="h-4 w-4 mr-2" />

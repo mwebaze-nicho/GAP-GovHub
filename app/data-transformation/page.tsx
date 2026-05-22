@@ -169,9 +169,46 @@ export default function DataTransformation() {
     }, 2000)
   }
 
+  const deleteCorrespondingApi = (transformationToDelete: any) => {
+    // Only delete APIs for custom transformations (created via Integration Wizard)
+    if (transformationToDelete.id <= 1000 || !transformationToDelete.sourceUrl) {
+      return
+    }
+
+    try {
+      // Get existing registered APIs from localStorage
+      const existingApis = localStorage.getItem('govhub-registered-apis')
+      if (!existingApis) return
+
+      const registeredApis = JSON.parse(existingApis)
+
+      // Find matching API by endpoint URL
+      const matchingApiIndex = registeredApis.findIndex((api: any) =>
+        api.endpoint === transformationToDelete.sourceUrl
+      )
+
+      if (matchingApiIndex !== -1) {
+        // Remove the matching API
+        const updatedApis = registeredApis.filter((_: any, index: number) => index !== matchingApiIndex)
+
+        // Save updated APIs back to localStorage
+        localStorage.setItem('govhub-registered-apis', JSON.stringify(updatedApis))
+
+        console.log(`Deleted corresponding API with endpoint: ${transformationToDelete.sourceUrl}`)
+      } else {
+        console.log(`No matching API found for endpoint: ${transformationToDelete.sourceUrl}`)
+      }
+    } catch (error) {
+      console.error('Error deleting corresponding API:', error)
+    }
+  }
+
   const handleDeleteTransform = (transformId: number, transformName: string) => {
-    if (window.confirm(`Are you sure you want to delete "${transformName}"?\n\nThis action cannot be undone.`)) {
-      setActionFeedback(prev => ({...prev, [transformId]: `Deleting transformation...`}))
+    if (window.confirm(`Are you sure you want to delete "${transformName}"?\n\nThis will also remove the corresponding API from the API Registry.\n\nThis action cannot be undone.`)) {
+      setActionFeedback(prev => ({...prev, [transformId]: `Deleting transformation and API...`}))
+
+      // Find the transformation to delete to get its details
+      const transformationToDelete = transformations.find(t => t.id === transformId)
 
       // Update local state
       setTransformations(prev => prev.filter(t => t.id !== transformId))
@@ -188,6 +225,11 @@ export default function DataTransformation() {
             console.error('Error updating localStorage:', error)
           }
         }
+
+        // Delete the corresponding API from the registry
+        if (transformationToDelete) {
+          deleteCorrespondingApi(transformationToDelete)
+        }
       }
 
       setTimeout(() => {
@@ -196,7 +238,7 @@ export default function DataTransformation() {
           delete newState[transformId]
           return newState
         })
-      }, 1000)
+      }, 1500) // Increased timeout slightly for the longer operation
     }
   }
 

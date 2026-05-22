@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MainLayout } from '@/components/layout/main-layout'
 import { BreadcrumbNav } from '@/components/layout/breadcrumb-nav'
 import { APITable } from '@/components/api-registry/api-table'
-import { apis } from '@/lib/mock-data'
+import { apis as defaultApis } from '@/lib/mock-data'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -29,6 +29,7 @@ export default function APIRegistry() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [showRegisterModal, setShowRegisterModal] = useState(false)
+  const [apis, setApis] = useState<any[]>([])
   const [newApiData, setNewApiData] = useState({
     name: '',
     description: '',
@@ -38,6 +39,40 @@ export default function APIRegistry() {
     category: 'REST',
     environment: 'production'
   })
+
+  // Load APIs from localStorage and combine with default APIs
+  useEffect(() => {
+    const loadApis = () => {
+      const stored = localStorage.getItem('govhub-registered-apis')
+      let customApis: any[] = []
+
+      if (stored) {
+        try {
+          customApis = JSON.parse(stored)
+        } catch (error) {
+          console.error('Error loading registered APIs:', error)
+        }
+      }
+
+      // Combine custom APIs with default APIs
+      setApis([...customApis, ...defaultApis])
+    }
+
+    loadApis()
+
+    // Listen for storage changes to sync across tabs/windows
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'govhub-registered-apis') {
+        loadApis()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
 
   const filteredAPIs = apis.filter((api) => {
     const matchesSearch =
@@ -63,16 +98,69 @@ export default function APIRegistry() {
     })
   }
 
+  const generateApiId = () => {
+    return `api-${Date.now()}`
+  }
+
+  const generateMinistryId = (ministryName: string) => {
+    const ministryMap: {[key: string]: string} = {
+      'Ministry of Health': 'moh',
+      'Ministry of Education': 'moe',
+      'Ministry of Finance': 'mof',
+      'Ministry of Agriculture': 'moa',
+      'Ministry of Justice': 'moj',
+      'Ministry of ICT': 'moict',
+      'Ministry of Trade': 'mot',
+      'Ministry of Defense': 'mod'
+    }
+    return ministryMap[ministryName] || 'unknown'
+  }
+
   const registerApi = () => {
     if (!newApiData.name || !newApiData.endpoint || !newApiData.ministry) return
 
-    // Here you would typically make an API call to register the new API
-    console.log('Registering API:', newApiData)
+    // Create a new API object with the same structure as the mock data
+    const newApi = {
+      id: generateApiId(),
+      name: newApiData.name,
+      ministry: newApiData.ministry,
+      ministryId: generateMinistryId(newApiData.ministry),
+      status: 'active' as const,
+      endpoint: newApiData.endpoint,
+      callsPerDay: 0,
+      uptime: 100.0,
+      responseTime: 0,
+      version: newApiData.version || 'v1.0.0',
+      lastUpdated: new Date(),
+      description: newApiData.description,
+      methods: ['GET', 'POST'], // Default methods
+    }
+
+    // Get existing registered APIs from localStorage
+    const existingApis = localStorage.getItem('govhub-registered-apis')
+    let registeredApis: any[] = []
+
+    if (existingApis) {
+      try {
+        registeredApis = JSON.parse(existingApis)
+      } catch (error) {
+        console.error('Error loading existing APIs:', error)
+      }
+    }
+
+    // Add the new API to the beginning of the list
+    const updatedApis = [newApi, ...registeredApis]
+
+    // Save to localStorage
+    localStorage.setItem('govhub-registered-apis', JSON.stringify(updatedApis))
+
+    // Update the state to include the new API
+    setApis([newApi, ...apis])
 
     setShowRegisterModal(false)
     resetForm()
 
-    // Show success feedback or update the APIs list
+    console.log('API registered successfully:', newApi)
   }
 
   return (

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { MainLayout } from '@/components/layout/main-layout'
 import { BreadcrumbNav } from '@/components/layout/breadcrumb-nav'
 import { APITable } from '@/components/api-registry/api-table'
@@ -15,12 +14,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Search, Plus } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Search, Plus, Server } from 'lucide-react'
 
 export default function APIRegistry() {
-  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [showRegisterModal, setShowRegisterModal] = useState(false)
+  const [newApiData, setNewApiData] = useState({
+    name: '',
+    description: '',
+    version: '',
+    endpoint: '',
+    ministry: '',
+    category: 'REST',
+    environment: 'production'
+  })
 
   const filteredAPIs = apis.filter((api) => {
     const matchesSearch =
@@ -29,6 +46,34 @@ export default function APIRegistry() {
     const matchesStatus = statusFilter === 'all' || api.status === statusFilter
     return matchesSearch && matchesStatus
   })
+
+  const openRegisterModal = () => {
+    setShowRegisterModal(true)
+  }
+
+  const resetForm = () => {
+    setNewApiData({
+      name: '',
+      description: '',
+      version: '',
+      endpoint: '',
+      ministry: '',
+      category: 'REST',
+      environment: 'production'
+    })
+  }
+
+  const registerApi = () => {
+    if (!newApiData.name || !newApiData.endpoint || !newApiData.ministry) return
+
+    // Here you would typically make an API call to register the new API
+    console.log('Registering API:', newApiData)
+
+    setShowRegisterModal(false)
+    resetForm()
+
+    // Show success feedback or update the APIs list
+  }
 
   return (
     <MainLayout>
@@ -44,7 +89,7 @@ export default function APIRegistry() {
             </p>
           </div>
           <Button
-            onClick={() => router.push('/integration-wizard')}
+            onClick={openRegisterModal}
             className="mt-4 md:mt-0 w-full md:w-auto bg-[#FFD700] hover:bg-[#FFD700]/90 text-black font-medium"
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -84,6 +129,148 @@ export default function APIRegistry() {
         {/* Table */}
         <APITable apis={filteredAPIs} />
       </div>
+
+      {/* Register API Modal */}
+      <Dialog open={showRegisterModal} onOpenChange={setShowRegisterModal}>
+        <DialogContent className="sm:max-w-[600px] bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 shadow-2xl backdrop-blur-sm">
+          <DialogHeader className="pb-4 border-b border-slate-200 dark:border-slate-700">
+            <DialogTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
+              <Server className="h-5 w-5 text-[#FFD700]" />
+              Register New API
+            </DialogTitle>
+            <DialogDescription className="text-slate-600 dark:text-slate-400">
+              Register your API to make it discoverable in the government API registry. Provide accurate information for better integration.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-6 bg-slate-50 dark:bg-slate-800/50 rounded-lg px-6 mx-2">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="apiName" className="text-slate-900 dark:text-slate-100 font-medium">API Name *</Label>
+                <Input
+                  id="apiName"
+                  placeholder="e.g., Health Records API"
+                  value={newApiData.name}
+                  onChange={(e) => setNewApiData(prev => ({ ...prev, name: e.target.value }))}
+                  className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="version" className="text-slate-900 dark:text-slate-100 font-medium">Version</Label>
+                <Input
+                  id="version"
+                  placeholder="e.g., v1.0"
+                  value={newApiData.version}
+                  onChange={(e) => setNewApiData(prev => ({ ...prev, version: e.target.value }))}
+                  className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-slate-900 dark:text-slate-100 font-medium">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Describe what your API does and its main functions..."
+                value={newApiData.description}
+                onChange={(e) => setNewApiData(prev => ({ ...prev, description: e.target.value }))}
+                className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 min-h-[80px]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="endpoint" className="text-slate-900 dark:text-slate-100 font-medium">Base Endpoint URL *</Label>
+              <Input
+                id="endpoint"
+                placeholder="https://api.health.gov.rw/v1"
+                value={newApiData.endpoint}
+                onChange={(e) => setNewApiData(prev => ({ ...prev, endpoint: e.target.value }))}
+                className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="ministry" className="text-slate-900 dark:text-slate-100 font-medium">Ministry *</Label>
+                <Select
+                  value={newApiData.ministry}
+                  onValueChange={(value) => setNewApiData(prev => ({ ...prev, ministry: value }))}
+                >
+                  <SelectTrigger className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600">
+                    <SelectValue placeholder="Select ministry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Ministry of Health">Ministry of Health</SelectItem>
+                    <SelectItem value="Ministry of Education">Ministry of Education</SelectItem>
+                    <SelectItem value="Ministry of Finance">Ministry of Finance</SelectItem>
+                    <SelectItem value="Ministry of Agriculture">Ministry of Agriculture</SelectItem>
+                    <SelectItem value="Ministry of Justice">Ministry of Justice</SelectItem>
+                    <SelectItem value="Ministry of ICT">Ministry of ICT</SelectItem>
+                    <SelectItem value="Ministry of Trade">Ministry of Trade</SelectItem>
+                    <SelectItem value="Ministry of Defense">Ministry of Defense</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-slate-900 dark:text-slate-100 font-medium">API Type</Label>
+                <Select
+                  value={newApiData.category}
+                  onValueChange={(value) => setNewApiData(prev => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="REST">REST API</SelectItem>
+                    <SelectItem value="GraphQL">GraphQL</SelectItem>
+                    <SelectItem value="SOAP">SOAP</SelectItem>
+                    <SelectItem value="Webhook">Webhook</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="environment" className="text-slate-900 dark:text-slate-100 font-medium">Environment</Label>
+              <Select
+                value={newApiData.environment}
+                onValueChange={(value) => setNewApiData(prev => ({ ...prev, environment: value }))}
+              >
+                <SelectTrigger className="bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="production">Production</SelectItem>
+                  <SelectItem value="staging">Staging</SelectItem>
+                  <SelectItem value="development">Development</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowRegisterModal(false)
+                resetForm()
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={registerApi}
+              disabled={!newApiData.name || !newApiData.endpoint || !newApiData.ministry}
+              className="flex-1 bg-[#FFD700] hover:bg-[#FFD700]/90 text-black font-medium disabled:opacity-50"
+            >
+              Register API
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   )
 }

@@ -24,7 +24,6 @@ interface API {
   uptime: number
   responseTime: number
   version: string
-  apiKey?: string
 }
 
 interface APITableProps {
@@ -47,19 +46,12 @@ const statusConfig = {
 }
 
 export function APITable({ apis }: APITableProps) {
-  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+  const [copiedEndpoint, setCopiedEndpoint] = useState<string | null>(null)
 
-  const copyToClipboard = (key: string, apiId: string) => {
-    navigator.clipboard.writeText(key)
-    setCopiedKey(apiId)
-    setTimeout(() => setCopiedKey(null), 2000)
-  }
-
-  const generateApiKey = (apiId: string, name: string) => {
-    // Generate a consistent API key based on the API ID and name
-    const prefix = 'gov_api'
-    const hash = apiId.slice(-8) + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4)
-    return `${prefix}_${hash}`
+  const copyToClipboard = (endpoint: string, apiId: string) => {
+    navigator.clipboard.writeText(endpoint)
+    setCopiedEndpoint(apiId)
+    setTimeout(() => setCopiedEndpoint(null), 2000)
   }
 
   return (
@@ -71,7 +63,7 @@ export function APITable({ apis }: APITableProps) {
         <TableHeader>
           <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-700 dark:hover:to-slate-800 border-b border-slate-200/60 dark:border-slate-700/60">
             <TableHead className="font-semibold text-slate-700 dark:text-slate-300">API Name</TableHead>
-            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">API Key</TableHead>
+            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Endpoint</TableHead>
             <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Status</TableHead>
             <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Actions</TableHead>
           </TableRow>
@@ -79,7 +71,6 @@ export function APITable({ apis }: APITableProps) {
         <TableBody>
           {apis.map((api) => {
             const statusInfo = statusConfig[api.status]
-            const apiKey = api.apiKey || generateApiKey(api.id, api.name)
 
             return (
               <TableRow key={api.id} className="border-b border-slate-200/40 dark:border-slate-700/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
@@ -91,17 +82,17 @@ export function APITable({ apis }: APITableProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <code className="text-xs bg-muted px-2 py-1 rounded font-mono text-muted-foreground">
-                      {apiKey}
+                    <code className="text-xs bg-muted px-2 py-1 rounded font-mono text-muted-foreground truncate max-w-xs">
+                      {api.endpoint}
                     </code>
                     <Button
                       variant="ghost"
                       size="sm"
                       className="h-6 w-6 p-0"
-                      onClick={() => copyToClipboard(apiKey, api.id)}
-                      title="Copy API key"
+                      onClick={() => copyToClipboard(api.endpoint, api.id)}
+                      title="Copy endpoint URL"
                     >
-                      {copiedKey === api.id ? (
+                      {copiedEndpoint === api.id ? (
                         <CheckCircle className="h-3 w-3 text-green-600" />
                       ) : (
                         <Copy className="h-3 w-3" />

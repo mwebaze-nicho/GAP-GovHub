@@ -116,19 +116,11 @@ export default function APIRegistry() {
     return ministryMap[ministryName] || 'unknown'
   }
 
-  const generateApiKey = (apiId: string, name: string) => {
-    // Generate a consistent API key based on the API ID and name
-    const prefix = 'gov_api'
-    const hash = apiId.slice(-8) + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4)
-    return `${prefix}_${hash}`
-  }
-
   const registerApi = () => {
     if (!newApiData.name || !newApiData.endpoint || !newApiData.ministry) return
 
-    // Generate unique ID and API key
+    // Generate unique ID
     const apiId = generateApiId()
-    const apiKey = generateApiKey(apiId, newApiData.name)
 
     // Create a new API object with the same structure as the mock data
     const newApi = {
@@ -145,7 +137,6 @@ export default function APIRegistry() {
       lastUpdated: new Date(),
       description: newApiData.description,
       methods: ['GET', 'POST'], // Default methods
-      apiKey: apiKey,
     }
 
     // Get existing registered APIs from localStorage

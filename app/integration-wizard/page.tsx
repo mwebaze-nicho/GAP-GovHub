@@ -178,6 +178,8 @@ export default function IntegrationWizard() {
       lastUpdated: new Date(),
       description: `${formData.systemType?.toUpperCase() || 'API'} integration created via System Integration Wizard for ${formData.ministry}`,
       methods: ['GET', 'POST'], // Default methods
+      apiKey: formData.apiKey, // Store the API key for authentication
+      authType: formData.authType, // Store the authentication type
     }
 
     // Get existing registered APIs from localStorage

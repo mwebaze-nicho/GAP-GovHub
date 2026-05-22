@@ -24,6 +24,8 @@ interface API {
   uptime: number
   responseTime: number
   version: string
+  apiKey?: string
+  authType?: string
 }
 
 interface APITableProps {

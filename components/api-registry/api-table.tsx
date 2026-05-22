@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import {
   Table,
   TableBody,
@@ -10,7 +11,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Eye, Settings } from 'lucide-react'
+import { Eye, Settings, Copy, CheckCircle } from 'lucide-react'
 import { OverflowIndicator } from '@/components/ui/overflow-indicator'
 
 interface API {
@@ -23,6 +24,7 @@ interface API {
   uptime: number
   responseTime: number
   version: string
+  apiKey?: string
 }
 
 interface APITableProps {
@@ -45,6 +47,21 @@ const statusConfig = {
 }
 
 export function APITable({ apis }: APITableProps) {
+  const [copiedKey, setCopiedKey] = useState<string | null>(null)
+
+  const copyToClipboard = (key: string, apiId: string) => {
+    navigator.clipboard.writeText(key)
+    setCopiedKey(apiId)
+    setTimeout(() => setCopiedKey(null), 2000)
+  }
+
+  const generateApiKey = (apiId: string, name: string) => {
+    // Generate a consistent API key based on the API ID and name
+    const prefix = 'gov_api'
+    const hash = apiId.slice(-8) + name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4)
+    return `${prefix}_${hash}`
+  }
+
   return (
     <OverflowIndicator
       direction="horizontal"
@@ -54,17 +71,16 @@ export function APITable({ apis }: APITableProps) {
         <TableHeader>
           <TableRow className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-700 dark:hover:to-slate-800 border-b border-slate-200/60 dark:border-slate-700/60">
             <TableHead className="font-semibold text-slate-700 dark:text-slate-300">API Name</TableHead>
-            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Ministry</TableHead>
+            <TableHead className="font-semibold text-slate-700 dark:text-slate-300">API Key</TableHead>
             <TableHead className="font-semibold text-slate-700 dark:text-slate-300">Status</TableHead>
-            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Calls/Day</TableHead>
-            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Response Time</TableHead>
-            <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Uptime</TableHead>
             <TableHead className="text-right font-semibold text-slate-700 dark:text-slate-300">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {apis.map((api) => {
             const statusInfo = statusConfig[api.status]
+            const apiKey = api.apiKey || generateApiKey(api.id, api.name)
+
             return (
               <TableRow key={api.id} className="border-b border-slate-200/40 dark:border-slate-700/40 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                 <TableCell>
@@ -73,20 +89,28 @@ export function APITable({ apis }: APITableProps) {
                     <p className="text-xs text-slate-500 dark:text-slate-400">{api.version}</p>
                   </div>
                 </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">{api.ministry}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs bg-muted px-2 py-1 rounded font-mono text-muted-foreground">
+                      {apiKey}
+                    </code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0"
+                      onClick={() => copyToClipboard(apiKey, api.id)}
+                      title="Copy API key"
+                    >
+                      {copiedKey === api.id ? (
+                        <CheckCircle className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </Button>
+                  </div>
+                </TableCell>
                 <TableCell>
                   <Badge className={statusInfo.badge}>{statusInfo.label}</Badge>
-                </TableCell>
-                <TableCell className="text-right text-slate-600 dark:text-slate-400">
-                  {api.callsPerDay.toLocaleString()}
-                </TableCell>
-                <TableCell className="text-right text-slate-600 dark:text-slate-400">
-                  {api.responseTime}ms
-                </TableCell>
-                <TableCell className="text-right">
-                  <span className="text-sm font-medium text-green-600 dark:text-green-400">
-                    {api.uptime}%
-                  </span>
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">

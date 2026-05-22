@@ -22,6 +22,7 @@ export const apis = [
     lastUpdated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
     description: 'Centralized patient records and medical history access',
     methods: ['GET', 'POST', 'PUT'],
+    apiKey: 'gov_api_001patie',
   },
   {
     id: 'api-002',
@@ -37,6 +38,7 @@ export const apis = [
     lastUpdated: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
     description: 'School enrollment, student records, and academic performance',
     methods: ['GET', 'POST'],
+    apiKey: 'gov_api_002educa',
   },
   {
     id: 'api-003',
@@ -52,6 +54,7 @@ export const apis = [
     lastUpdated: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
     description: 'URA tax collection and compliance management system',
     methods: ['GET', 'POST', 'PUT'],
+    apiKey: 'gov_api_003taxco',
   },
   {
     id: 'api-004',
@@ -67,6 +70,7 @@ export const apis = [
     lastUpdated: new Date(Date.now() - 12 * 60 * 60 * 1000),
     description: 'National identification verification and validation service',
     methods: ['GET', 'POST'],
+    apiKey: 'gov_api_004natio',
   },
   {
     id: 'api-005',
@@ -82,6 +86,7 @@ export const apis = [
     lastUpdated: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
     description: 'Land ownership and property registration records',
     methods: ['GET', 'POST'],
+    apiKey: 'gov_api_005landr',
   },
 ]
 

@@ -140,6 +140,25 @@ export default function IntegrationWizard() {
     return ministryMap[ministryName] || 'unknown'
   }
 
+  const generateApiName = (ministry: string, systemType: string) => {
+    // Create more descriptive API names based on ministry
+    const ministryPrefixes: {[key: string]: string} = {
+      'Ministry of Health': 'Health Records',
+      'Ministry of Education': 'Education Management System',
+      'Ministry of Finance': 'Financial Services',
+      'Ministry of Agriculture': 'Agricultural Data',
+      'Ministry of Justice': 'Justice System',
+      'Ministry of ICT': 'Digital Services',
+      'Ministry of Trade': 'Trade & Commerce',
+      'Ministry of Defense': 'Defense Systems'
+    }
+
+    const prefix = ministryPrefixes[ministry] || ministry
+    const typeLabel = systemType?.toUpperCase() || 'API'
+
+    return `${prefix} ${typeLabel}`
+  }
+
   const registerApiToRegistry = () => {
     // Generate unique ID
     const apiId = generateApiId()
@@ -147,7 +166,7 @@ export default function IntegrationWizard() {
     // Create a new API object for the registry
     const newApi = {
       id: apiId,
-      name: `${formData.ministry} API`,
+      name: generateApiName(formData.ministry, formData.systemType),
       ministry: formData.ministry,
       ministryId: generateMinistryId(formData.ministry),
       status: 'active' as const,
@@ -157,7 +176,7 @@ export default function IntegrationWizard() {
       responseTime: 0,
       version: 'v1.0.0',
       lastUpdated: new Date(),
-      description: `API integration created via System Integration Wizard`,
+      description: `${formData.systemType?.toUpperCase() || 'API'} integration created via System Integration Wizard for ${formData.ministry}`,
       methods: ['GET', 'POST'], // Default methods
     }
 

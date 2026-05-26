@@ -96,7 +96,7 @@ This prototype is designed to demonstrate the proposed functionality and user ex
 ```bash
 # Clone the prototype
 git clone [repository-url]
-cd GovHub
+cd GAP-GovHub
 
 # Install dependencies
 pnpm install

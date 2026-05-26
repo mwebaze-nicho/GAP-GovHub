@@ -1,7 +1,7 @@
 # GovHub - Government API Gateway
 ## Prototype Proposal for Uganda's Digital Government Transformation
 
-[![Uganda Ministry of ICT](https://images.seeklogo.com/logo-png/31/1/coat-of-arms-of-the-republic-of-uganda-logo-png_seeklogo-311603.png)](https://www.ict.go.ug/)
+[![Uganda Ministry of ICT](https://images.seeklogo.com/logo-png/31/1/coat-of-arms-of-the-republic-of-uganda-logo-png_seeklogo-311603.png)](https://ict.go.ug/)
 
 **Prototype Innovation Submission - Ministry of Information and Communications Technology**
 
